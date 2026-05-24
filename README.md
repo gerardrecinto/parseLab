@@ -1,7 +1,7 @@
 # Parse Chat
 
-![Swift](https://img.shields.io/badge/Swift-3%2B-F05138?logo=swift&logoColor=white)
-![iOS 9+](https://img.shields.io/badge/iOS-9%2B-000000?logo=apple&logoColor=white)
+![Swift](https://img.shields.io/badge/Swift-6.0-F05138?logo=swift&logoColor=white)
+![iOS 16+](https://img.shields.io/badge/iOS-16%2B-000000?logo=apple&logoColor=white)
 ![Parse](https://img.shields.io/badge/Backend-Parse-purple)
 ![UIKit](https://img.shields.io/badge/UIKit-UITableView-lightgrey)
 ![CocoaPods](https://img.shields.io/badge/CocoaPods-Parse-red)
@@ -23,9 +23,9 @@
 
 | Layer | Technology |
 |---|---|
-| Language | Swift 3 |
+| Language | Swift 6.0 |
 | UI | UIKit, UITableView, UIAlertController, Auto Layout |
-| Backend | Parse SDK (PFObject, PFUser, PFQuery) |
+| Backend | Local in-memory store|
 | Polling | `Timer.scheduledTimer(timeInterval:target:selector:userInfo:repeats:)` |
 | Auth | PFUser `signUpInBackground` / `logInWithUsername(inBackground:)` |
 | Dependencies | CocoaPods — Parse |
@@ -36,19 +36,4 @@ The app has three view controllers connected in a storyboard: `LoginViewControll
 
 ## Key Implementation
 
-**5-second polling loop:** `Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(self.onTimer), userInfo: nil, repeats: true)` is created in `viewDidLoad`; `onTimer` delegates to `getMessages()`, which replaces `self.msgs` and calls `tableView.reloadData()` on the main queue via the Parse SDK's completion delivery.
-
-**Query with pointer inclusion:** `query.includeKey("user")` tells Parse to join the user pointer on the server so each returned `PFObject` carries the full `PFUser` object — accessible as `msg["user"] as? PFUser` without a secondary fetch.
-
-**Message persistence:** `PFObject(className:)` is used directly (without subclassing) for messages; the `"text"` key is set and `saveInBackground` is called with a completion block to log errors or confirm success.
-
-## Setup
-
-```bash
-git clone https://github.com/gerardrecinto/parse-chat-ios.git
-cd parse-chat-ios
-pod install
-open parseChat.xcworkspace
-```
-
-Configure Parse server: update `applicationId` and `server` in `AppDelegate.swift` before building.
+**5-second polling loop:** `Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(self.onTimer), userInfo: nil, repeats: true)` is created in `viewDidLoad`; `onTimer` delegates to `getMessages()`, which replaces `self.msgs` and calls `tableView.reloadData()` on the main queue via the Local in-memory store

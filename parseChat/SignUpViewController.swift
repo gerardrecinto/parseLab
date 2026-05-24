@@ -7,57 +7,27 @@
 //
 
 import UIKit
-import Parse
+
+@MainActor
 class SignUpViewController: UIViewController {
     @IBOutlet weak var email: UITextField!
-
     @IBOutlet weak var password: UITextField!
-    
+
     @IBAction func submit(_ sender: Any) {
-        myMethod()
-    }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    
-    func myMethod() {
-        var user = PFUser()
-        user.username = email.text
-        user.password = password.text
-        user.email = email.text
-        // other fields can be set just like with PFObject
-        //user["phone"] = "415-392-0202"
-        
-        user.signUpInBackground {
-            (succeeded: Bool, error: Error?) -> Void in
-            if let error = error {
-                print("Sign up error")
-                let errorString = error.localizedDescription
-                // Show the errorString somewhere and let the user try again.
-            } else {
-                print("Sign up success!")
-                // Hooray! Let them use the app now.
-            }
+        do {
+            try LocalChatService.shared.signup(
+                username: email.text ?? "",
+                password: password.text ?? ""
+            )
+            performSegue(withIdentifier: "loginToNavigation", sender: self)
+        } catch {
+            let alert = UIAlertController(title: "Sign Up Failed", message: error.localizedDescription, preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default))
+            present(alert, animated: true)
         }
     }
-    
 
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+    override func viewDidLoad() {
+        super.viewDidLoad()
     }
-    */
-
 }
